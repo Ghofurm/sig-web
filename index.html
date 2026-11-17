@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="id" data-type="software" data-radius="sharp">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kepadatan Penduduk &amp; Akses Faskes — Kota Semarang</title>
+<meta name="description" content="Peta interaktif 16 kecamatan Kota Semarang: kepadatan penduduk, rasio fasilitas kesehatan, dan cakupan radius 1 km.">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f7f4ed">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kepadatan Penduduk &amp; Akses Faskes — Kota Semarang">
+<meta property="og:description" content="Peta interaktif kepadatan penduduk dan aksesibilitas fasilitas kesehatan di 16 kecamatan Kota Semarang.">
+<meta property="og:url" content="https://ghofurm.github.io/sig-web/">
+<meta property="og:image" content="https://ghofurm.github.io/sig-web/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kepadatan tinggi, layanan yang belum merata — peta Kota Semarang.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://ghofurm.github.io/sig-web/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<a class="skip" href="#peta">Lewati ke peta</a>
+
+<header class="site-head">
+  <div class="head-in">
+    <a class="brand" href="#peta" aria-label="Semarang Spasial — kembali ke peta">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="2.5" y="2.5" width="19" height="19" fill="none" stroke="currentColor"/>
+        <path d="M2.5 9h19M2.5 15h19M9 2.5v19M15 2.5v19" stroke="currentColor" opacity=".32"/>
+        <circle cx="15" cy="9" r="2.5" fill="currentColor" class="brand-dot"/>
+      </svg>
+      <span class="brand-name">Semarang <em>Spasial</em></span>
+    </a>
+    <nav class="nav-desk" aria-label="Navigasi utama">
+      <a href="#peta" data-nav="peta">Peta</a>
+      <a href="#temuan" data-nav="temuan">Temuan</a>
+      <a href="#perbandingan" data-nav="perbandingan">Perbandingan</a>
+      <a href="#wilayah" data-nav="wilayah">Wilayah</a>
+      <a href="#metode" data-nav="metode">Metode</a>
+    </nav>
+    <details class="mobile-menu">
+      <summary><span class="menu-text">Menu</span></summary>
+      <nav aria-label="Navigasi utama, seluler">
+        <a href="#peta">Peta</a>
+        <a href="#temuan">Temuan</a>
+        <a href="#perbandingan">Perbandingan</a>
+        <a href="#wilayah">Wilayah</a>
+        <a href="#metode">Metode</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="peta">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Laporan analisis spasial · Kota Semarang</p>
+        <h1>Kepadatan tinggi, layanan yang belum merata.</h1>
+        <p class="lead">Peta interaktif ini membandingkan kepadatan penduduk dengan jangkauan fasilitas kesehatan di 16 kecamatan Kota Semarang.</p>
+        <dl class="hero-stats">
+          <div>
+            <dt>Penduduk</dt>
+            <dd>1,72 <span class="unit">juta</span></dd>
+          </div>
+          <div>
+            <dt>Fasilitas terpetakan</dt>
+            <dd>259</dd>
+          </div>
+          <div>
+            <dt>Wilayah dalam radius 1 km</dt>
+            <dd>60<span class="unit">%</span></dd>
+          </div>
+        </dl>
+        <div class="hero-actions">
+          <a class="btn" href="#temuan">Baca temuan <span aria-hidden="true">↓</span></a>
+          <a class="link-arrow" href="#metode">Metode &amp; data</a>
+        </div>
+      </div>
+
+      <div class="map-frame is-loading" id="map-frame">
+        <div class="map-toolbar">
+          <div class="metric-tabs" role="group" aria-label="Pilih indikator peta">
+            <button type="button" class="metric-tab is-active" data-metric="density" aria-pressed="true">Kepadatan</button>
+            <button type="button" class="metric-tab" data-metric="per10k" aria-pressed="false">Faskes / 10.000</button>
+            <button type="button" class="metric-tab" data-metric="coverage" aria-pressed="false">Cakupan 1 km</button>
+          </div>
+          <p class="map-hint">Pilih wilayah untuk detail</p>
+        </div>
+        <div class="map-canvas">
+          <div id="map" role="region" aria-label="Peta interaktif kepadatan penduduk dan fasilitas kesehatan Kota Semarang"></div>
+          <p class="map-touch-hint" aria-hidden="true">Ketuk wilayah untuk detail</p>
+          <noscript><p class="map-noscript">Peta interaktif memerlukan JavaScript. Seluruh angka tersedia di bagian <a href="#wilayah">Wilayah</a> dan pada unduhan data.</p></noscript>
+          <div class="map-legend" id="map-legend">
+            <p class="legend-title" id="legend-title">Kepadatan penduduk</p>
+            <div class="legend-ramp" id="legend-ramp" aria-hidden="true"></div>
+            <div class="legend-scale"><span id="legend-min">1.640</span><span id="legend-max">11.894</span></div>
+            <p class="legend-note" id="legend-note">jiwa/km² · makin gelap, makin tinggi</p>
+            <div class="legend-layers">
+              <label class="check"><input type="checkbox" id="toggle-faskes" checked><span>Fasilitas</span></label>
+              <label class="check"><input type="checkbox" id="toggle-cakupan"><span>Buffer 1 km</span></label>
+              <label class="check"><input type="checkbox" id="toggle-label" checked aria-label="Tampilkan nama kecamatan"><span>Nama</span></label>
+            </div>
+          </div>
+          <aside class="map-detail" id="map-detail" hidden aria-labelledby="detail-name" aria-live="polite">
+            <button type="button" class="detail-close" id="detail-close" aria-label="Tutup detail kecamatan">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5l14 14M19 5L5 19" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            </button>
+            <p class="detail-kicker">Kecamatan</p>
+            <h2 class="detail-name" id="detail-name"></h2>
+            <p class="detail-flag" id="detail-flag" hidden>Perlu perhatian</p>
+            <dl class="detail-stats">
+              <div><dt>Kepadatan</dt><dd><span id="d-density"></span><small>jiwa/km²</small></dd></div>
+              <div><dt>Penduduk</dt><dd id="d-pop"></dd></div>
+              <div><dt>Fasilitas</dt><dd id="d-faskes"></dd></div>
+              <div><dt>per 10.000</dt><dd id="d-ratio"></dd></div>
+              <div><dt>Cakupan 1 km</dt><dd id="d-cov"></dd></div>
+              <div><dt>Rumah sakit</dt><dd id="d-rs"></dd></div>
+            </dl>
+            <p class="detail-breakdown" id="detail-breakdown"></p>
+            <p class="detail-note" id="detail-note"></p>
+          </aside>
+          <p class="map-error" id="map-error" hidden>Data peta gagal dimuat. Seluruh angka tetap tersedia di bagian <a href="#wilayah">Wilayah</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="temuan">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">01 · Temuan</p>
+          <h2>Layanan memusat, penduduk menyebar.</h2>
+        </div>
+        <p class="sec-intro">Fasilitas kesehatan menumpuk di pusat kota. Sementara itu, kecamatan berpenduduk besar di timur dan selatan tidak selalu memiliki fasilitas sebanding dengan jumlah warganya.</p>
+      </div>
+
+      <ol class="finding-list">
+        <li class="finding">
+          <p class="finding-num">7<span>×</span></p>
+          <div class="finding-body">
+            <h3>Selisih kepadatan tertinggi dan terendah.</h3>
+            <p>Semarang Timur mencapai 11.894 jiwa/km²; Tugu 1.640 jiwa/km². Kepadatan pusat kota hampir tujuh kali lipat pinggiran barat.</p>
+          </div>
+          <button type="button" class="text-link" data-focus="Semarang Timur">Lihat di peta <span aria-hidden="true">→</span></button>
+        </li>
+        <li class="finding">
+          <p class="finding-num">0,83</p>
+          <div class="finding-body">
+            <h3>Fasilitas per 10.000 penduduk di Mijen, terendah di kota.</h3>
+            <p>Rata-rata kota 1,50. Rasio ini menghitung klinik, rumah sakit, dan praktik dokter tanpa membedakan kapasitas layanannya.</p>
+          </div>
+          <button type="button" class="text-link" data-focus="Mijen">Lihat di peta <span aria-hidden="true">→</span></button>
+        </li>
+        <li class="finding">
+          <p class="finding-num">54<span>%</span></p>
+          <div class="finding-body">
+            <h3>Wilayah Tembalang dalam radius 1 km fasilitas kesehatan.</h3>
+            <p>Kecamatan dengan penduduk terbanyak, 204.865 jiwa, memiliki 23 fasilitas terpetakan. Radius 1 km menutup sebagian besar pusat kecamatan, tetapi menyisakan wilayah selatan dan barat.</p>
+          </div>
+          <button type="button" class="text-link" data-focus="Tembalang">Lihat di peta <span aria-hidden="true">→</span></button>
+        </li>
+      </ol>
+
+      <p class="section-note">Kepadatan = penduduk ÷ luas kecamatan. Rasio faskes = jumlah fasilitas per 10.000 penduduk. Cakupan 1 km = luas irisan buffer 1 km dengan batas kecamatan. <a href="#metode">Baca metode</a>.</p>
+    </div>
+  </section>
+
+  <section class="moment" aria-labelledby="moment-title">
+    <div class="wrap moment-grid">
+      <div>
+        <p class="eyebrow eyebrow-light">Celah akses · Estimasi</p>
+        <h2 id="moment-title">
+          <span class="moment-number">±<span id="count-value">500</span> ribu</span>
+          <span class="moment-sentence">warga tinggal lebih dari 1 km dari fasilitas kesehatan terdekat.</span>
+        </h2>
+        <p class="moment-note">Setara 29% penduduk kota. Angka ini dihitung dari proporsi luas kecamatan di luar buffer 1 km, dengan asumsi penduduk tersebar merata. Ini estimasi, bukan hasil survei rumah tangga. <a href="#metode">Lihat metodenya</a>.</p>
+      </div>
+      <div class="dot-wrap">
+        <div class="dot-grid" id="dot-grid" aria-hidden="true"></div>
+        <p class="dot-caption"><span class="dot-key" aria-hidden="true"></span>29 dari 100 titik mewakili penduduk di luar cakupan 1 km.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="perbandingan">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">02 · Perbandingan</p>
+          <h2>Kepadatan tidak otomatis berarti akses.</h2>
+        </div>
+        <p class="sec-intro">Setiap titik adalah satu kecamatan. Sumbu mendatar menunjukkan kepadatan; sumbu tegak menunjukkan fasilitas per 10.000 penduduk. Lima kecamatan berada di kanan bawah: Semarang Timur, Semarang Utara, Pedurungan, Genuk, dan Tembalang. Penduduknya 728.697 jiwa, 42% dari kota.</p>
+      </div>
+
+      <figure class="scatter-figure">
+        <div class="figure-head">
+          <h3 class="figure-title">Kepadatan dan rasio fasilitas, 16 kecamatan</h3>
+          <ul class="chart-key" aria-label="Keterangan diagram">
+            <li><span class="key-dot key-dot--priority" aria-hidden="true"></span>Perlu perhatian</li>
+            <li><span class="key-dot" aria-hidden="true"></span>Kecamatan lain</li>
+            <li><span class="key-size" aria-hidden="true"></span>Ukuran = penduduk</li>
+          </ul>
+        </div>
+        <div class="scatter" id="scatter"></div>
+        <figcaption>Garis putus-putus menandai rata-rata kota: 4.521 jiwa/km² dan 1,50 fasilitas per 10.000 penduduk. Pilih titik atau label untuk membuka kecamatan di peta.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-data" id="wilayah">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">03 · Wilayah</p>
+          <h2>16 kecamatan, satu per satu.</h2>
+        </div>
+        <p class="sec-intro">Urutkan tabel dengan menekan judul kolom. Nama kecamatan membuka lokasinya di peta. Tanda titik menandai lima kecamatan dengan kepadatan di atas rata-rata kota dan rasio fasilitas di bawah rata-rata.</p>
+      </div>
+
+      <div class="table-meta">
+        <p class="priority-key"><span aria-hidden="true"></span>Perlu perhatian: padat, rasio faskes rendah</p>
+        <p class="table-unit-note">Kepadatan: jiwa/km² · Rasio: faskes/10.000</p>
+        <p class="table-gesture">Geser tabel untuk kolom lain →</p>
+      </div>
+
+      <div class="table-wrap">
+        <table id="stats-table">
+          <caption class="sr-only">Kepadatan penduduk, jumlah fasilitas kesehatan, rasio fasilitas, dan cakupan radius 1 km menurut kecamatan di Kota Semarang.</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="th-name"><button type="button" class="sort-btn" data-sort="name" aria-label="Urutkan menurut nama kecamatan">Kecamatan<span class="sort-mark" aria-hidden="true"></span></button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-sort="pop" aria-label="Urutkan menurut jumlah penduduk">Penduduk<span class="sort-mark" aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="descending"><button type="button" class="sort-btn" data-sort="density" aria-label="Urutkan menurut kepadatan penduduk, jiwa per kilometer persegi">Kepadatan<span class="th-unit">jiwa/km²</span><span class="sort-mark" aria-hidden="true"></span></button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-sort="faskes" aria-label="Urutkan menurut jumlah fasilitas kesehatan"><abbr title="Fasilitas kesehatan">Faskes</abbr><span class="sort-mark" aria-hidden="true"></span></button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-sort="hospitals" aria-label="Urutkan menurut jumlah rumah sakit"><abbr title="Rumah sakit">RS</abbr><span class="sort-mark" aria-hidden="true"></span></button></th>
+              <th scope="col"><button type="button" class="sort-btn" data-sort="per10k" aria-label="Urutkan menurut fasilitas per 10.000 penduduk">per 10.000<span class="sort-mark" aria-hidden="true"></span></button></th>
+              <th scope="col" class="th-cov"><button type="button" class="sort-btn" data-sort="coverage" aria-label="Urutkan menurut cakupan radius 1 kilometer">Cakupan 1 km<span class="sort-mark" aria-hidden="true"></span></button></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+          <tfoot id="table-foot"></tfoot>
+        </table>
+      </div>
+      <p class="section-note">Cakupan mengukur luas wilayah, bukan jumlah penduduk yang terlayani. Satu fasilitas dapat melayani warga di kecamatan sebelah.</p>
+      <p class="load-error" id="table-error" hidden>Data tabel gagal dimuat. Unduhan data tetap tersedia di bagian <a href="#metode">Metode</a>.</p>
+    </div>
+  </section>
+
+  <section class="section" id="metode">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">04 · Metode &amp; data</p>
+          <h2>Cara angka ini disusun.</h2>
+        </div>
+        <p class="sec-intro">Halaman ini merangkum laporan <em>Analisis Spasial Kepadatan Penduduk dan Aksesibilitas Fasilitas Kesehatan di Kota Semarang</em>. Semua angka berasal dari dataset yang sama dengan analisis QGIS.</p>
+      </div>
+
+      <div class="method-grid">
+        <div>
+          <h3 class="subhead">Definisi</h3>
+          <dl class="defs">
+            <div><dt>Kepadatan penduduk</dt><dd>Jumlah penduduk dibagi luas kecamatan, dalam jiwa per km².</dd></div>
+            <div><dt>Rasio fasilitas</dt><dd>Jumlah titik fasilitas kesehatan dibagi penduduk, dikali 10.000.</dd></div>
+            <div><dt>Cakupan 1 km</dt><dd>Luas wilayah kecamatan yang berada dalam radius 1 km dari fasilitas kesehatan, dibagi luas kecamatan. Buffer dihitung dari jarak garis lurus.</dd></div>
+            <div><dt>Estimasi di luar cakupan</dt><dd>Penduduk dikali bagian luas yang tidak tercakup. Mengasumsikan penduduk tersebar merata di setiap kecamatan.</dd></div>
+          </dl>
+        </div>
+        <div>
+          <h3 class="subhead">Sumber &amp; batasan</h3>
+          <p>Batas kecamatan, jumlah penduduk, dan luas berasal dari dataset BPS Kota Semarang. Fasilitas kesehatan berasal dari <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>: 259 titik—216 klinik, 40 rumah sakit, dan 3 praktik dokter. Buffer, irisan, dan luas dihitung di <a href="https://qgis.org" target="_blank" rel="noopener">QGIS</a>.</p>
+          <ul class="limits">
+            <li>Kelengkapan OpenStreetMap tidak sama dengan registri resmi. Fasilitas yang belum terpetakan tidak ikut dihitung.</li>
+            <li>Radius 1 km adalah jarak garis lurus, bukan jarak tempuh atau waktu perjalanan.</li>
+            <li>Jumlah fasilitas tidak dibobot kapasitas; satu rumah sakit dan satu klinik dihitung sama.</li>
+            <li>Jenis fasilitas mengikuti tag OpenStreetMap. Sebagian titik yang tercatat sebagai klinik bisa berupa apotek atau layanan lain.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="downloads">
+        <div class="downloads-head">
+          <h3 class="subhead">Unduh data</h3>
+          <p>Data yang dipakai halaman ini tersedia untuk diperiksa ulang.</p>
+        </div>
+        <ul class="download-list">
+          <li><a href="data/kecamatan.geojson" download>Batas &amp; statistik kecamatan <span>GeoJSON</span></a></li>
+          <li><a href="data/faskes.geojson" download>Titik fasilitas kesehatan <span>GeoJSON</span></a></li>
+          <li><a href="data/cakupan.geojson" download>Buffer 1 km, dipotong batas kota <span>GeoJSON</span></a></li>
+          <li><a href="data/statistik-kecamatan.csv" download>Tabel statistik 16 kecamatan <span>CSV</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <p class="foot-brand">Semarang <em>Spasial</em></p>
+        <p class="foot-summary">Analisis Spasial Kepadatan Penduduk dan Aksesibilitas Fasilitas Kesehatan di Kota Semarang.</p>
+      </div>
+      <nav class="foot-nav" aria-label="Navigasi kaki halaman">
+        <a href="#peta">Peta</a>
+        <a href="#temuan">Temuan</a>
+        <a href="#perbandingan">Perbandingan</a>
+        <a href="#wilayah">Wilayah</a>
+        <a href="#metode">Metode</a>
+      </nav>
+    </div>
+    <div class="foot-meta">
+      <p>Data fasilitas © kontributor <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL). Peta dasar © kontributor OpenStreetMap. Batas dan penduduk: BPS Kota Semarang. Pengolahan: QGIS. Peta web: Leaflet.</p>
+      <a class="to-top" href="#peta">Kembali ke atas <span aria-hidden="true">↑</span></a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
